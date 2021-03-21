@@ -48,24 +48,6 @@ def login_account(request):
     return JsonResponse(response)
 
 @require_http_methods(["POST"])
-def modify_account(request):
-    post_body=json.loads(request.body)
-    r_username=post_body['username']
-    r_password=post_body['password']
-    print(r_username,r_password)
-    
-    response = {}
-    query_res=Account.objects.filter(username=r_username,password=r_password)
-    if query_res:
-        response['msg'] = 'success'
-        response['error_num'] = 0
-    else:
-        response['msg'] = 'No such account'
-        response['error_num'] = 1
-
-    return JsonResponse(response)
-
-@require_http_methods(["POST"])
 def register_account(request):
     post_body=json.loads(request.body)
     r_username=post_body['username']
@@ -83,6 +65,27 @@ def register_account(request):
         response['msg'] = str(e)
         response['error_num'] = 1
     return JsonResponse(response)
+
+
+@require_http_methods(["POST"])
+def modify_account(request):
+    post_body=json.loads(request.body)
+    r_username=post_body['username']
+    r_password=post_body['password']
+    print(r_username,r_password)
+    
+    response = {}
+    query_res=Account.objects.filter(username=r_username,password=r_password)
+    if query_res:
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    else:
+        response['msg'] = 'No such account'
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
+
 
 @require_http_methods(["POST"])
 def update_account(request):
@@ -110,11 +113,26 @@ def add_course(request):
     r_teacher_name=post_body['teacher_name']
     print(r_course_name,r_teacher_name)
     
-    Course.objects.create(course_name=r_course_name,teacher_name=r_teacher_name)
+    response = {}
+    
+    try:
+        Course.objects.get(course_name=r_course_name,teacher_name=r_teacher_name)
+    except  Exception as e:
+        Course.objects.create(course_name=r_course_name,teacher_name=r_teacher_name)
+        response['msg'] = 'success'
+        response['error_num'] = 0
+        return JsonResponse(response)
+    
+    response['msg'] = '已经存在一个相同的课程!'
+    response['error_num'] = 1
+    return JsonResponse(response)
 
-
+@require_http_methods(["GET"])
+def show_courses(request):
     response = {}
     try:
+        courses = Course.objects.filter()
+        response['list'] = json.loads(serializers.serialize("json", courses))
         response['msg'] = 'success'
         response['error_num'] = 0
     except  Exception as e:
@@ -122,8 +140,15 @@ def add_course(request):
         response['error_num'] = 1
     return JsonResponse(response)
 
-@require_http_methods(["GET"])
-def show_courses(request):
+@require_http_methods(["POST"])
+def delete_course(request):
+    post_body=json.loads(request.body)
+    r_course_name=post_body['course_name']
+    r_teacher_name=post_body['teacher_name']
+    print(r_course_name,r_teacher_name)
+    
+    Course.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).delete()
+
     response = {}
     try:
         courses = Course.objects.filter()

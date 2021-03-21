@@ -12,11 +12,9 @@ urlpatterns = [
     # path('modify_account',views.views.modify_account),
 
     path('add_course',views.add_course),
-    path('show_courses',views.show_courses)
-
-    
-
-    ]
+    path('show_courses',views.show_courses),
+    path('delete_course',views.delete_course),
+]
 
 
 ###path('admin/', admin.site.urls),

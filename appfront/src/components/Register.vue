@@ -15,7 +15,11 @@
           <el-form-item prop="password" label="设置密码">
             <el-input v-model="password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
-          <router-link to="/">返回登录界面</router-link>
+
+          <!-- <el-form-item>
+            <el-button type="primary" icon @click="backToLogin()">返回登录界面</el-button>
+          </el-form-item> -->
+
           <el-form-item>
             <el-button type="primary" icon @click="doRegister()">注册账号</el-button>
           </el-form-item>
@@ -75,9 +79,11 @@ export default {
                     }
                 })
             }
-        } 
+        },
+    backToLogin(){
+      this.$router.push({ path: "/" });
     }
-  
+  }
 };
 </script>
  

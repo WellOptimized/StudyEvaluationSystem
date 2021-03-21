@@ -9,15 +9,30 @@
     
     <el-row>
         <el-table :data="course_list" style="width: 100%" border>
-          <!-- <el-table-column prop="id" label="编号" min-width="100">
-            <template scope="scope"> {{ scope.row.pk }} </template>
-          </el-table-column> -->
-          <el-table-column prop="book_name" label="课程名" min-width="100">
-            <template scope="scope"> {{ scope.row.fields.course_name }} </template>
+          <el-table-column prop="course_name" label="课程名" min-width="100">
+            <template slot-scope="scope"> {{ scope.row.fields.course_name }} </template>
           </el-table-column>
-          <el-table-column prop="add_time" label="授课教师" min-width="100">
-            <template scope="scope"> {{ scope.row.fields.teacher_name }} </template>
+          <el-table-column prop="teacher_name" label="授课教师" min-width="100">
+            <template slot-scope="scope"> {{ scope.row.fields.teacher_name }} </template>
           </el-table-column>
+          
+
+          <el-table-column prop="evaluate_button" label="评学入口" min-width="100">
+            <template slot-scope="scope">
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices')">定量评学</el-button>
+            
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text')">定性评学</el-button>
+
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="delete_button" label="管理课程" min-width="100">
+            <template slot-scope="scope">
+            <el-button @click.native="deleteConfirm(scope.row.fields.course_name,scope.row.fields.teacher_name)">删除课程</el-button>
+            
+            </template>
+          </el-table-column>
+        
         </el-table>
     </el-row>
   </div>
@@ -48,9 +63,11 @@ export default {
           var res = response.data
           if (res.error_num == 0) {
             this.showCourses()
+            this.$message.success('成功添加课程')
+            this.input_course_name=''
+            this.input_teacher_name=''
           } else {
-            this.$message.error('新增课程失败，请重试')
-            console.log(res.msg)
+            this.$message.error(res['msg'])
           }
         })
     },
@@ -58,19 +75,45 @@ export default {
       this.$http.get('http://127.0.0.1:8000/api/show_courses')
         .then( response => {
           var res = response.data
-
           console.log(res)
-          
           if (res.error_num == 0) {
             this.course_list = res['list']
-            this.$message.success('查询课程成功')
-          
-            
           } else {
-            this.$message.error('查询课程失败')
+            this.$message.error(res['msg'])
+          }
+        })
+    },
+    jumpToDetail(url){
+      this.$router.push({ path: url });
+    },
+    deleteCourse(course_name,teacher_name){
+      this.$http.post('http://127.0.0.1:8000/api/delete_course',{
+          course_name:course_name,
+          teacher_name:teacher_name,
+      }).then( response => {
+          var res = response.data
+          if (res.error_num == 0) {
+            this.$message.success('删除课程成功')
+            this.showCourses()
+          } else {
+            this.$message.error('删除课程失败，请重试')
             console.log(res.msg)
           }
         })
+    },
+    deleteConfirm(course_name,teacher_name){
+        this.$confirm('确定删除该课程?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteCourse(course_name,teacher_name)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     }
   }
 }
