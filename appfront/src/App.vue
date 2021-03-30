@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import CourseList from './components/CourseList'
 import Login from './components/Login'
 
 export default {

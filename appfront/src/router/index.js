@@ -7,6 +7,8 @@ import Register from '@/components/Register'
 
 import Choices from '@/components/Choices'
 import Text from '@/components/Text'
+import ChoicesResult from '@/components/ChoicesResult'
+import TextResult from '@/components/TextResult'
 
 Vue.use(Router)
 
@@ -37,5 +39,16 @@ export default new Router({
       name: 'Text',
       component:Text
     },
+    {
+      path: '/courselist/showchoicesresult',
+      name: 'ChoicesResult',
+      component:ChoicesResult
+    },
+    {
+      path: '/courselist/showtextresult',
+      name: 'TextResult',
+      component:TextResult
+    },
   ]
 })
+

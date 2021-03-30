@@ -29,6 +29,8 @@
           <el-table-column prop="delete_button" label="管理课程" min-width="100">
             <template slot-scope="scope">
             <el-button @click.native="deleteConfirm(scope.row.fields.course_name,scope.row.fields.teacher_name)">删除课程</el-button>
+            <el-button @click.native="showTextResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示文本评价</el-button>
+            <el-button @click.native="showChoiceResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示选择评价</el-button>
             
             </template>
           </el-table-column>
@@ -36,6 +38,7 @@
         </el-table>
     </el-row>
   </div>
+
 </template>
 
 <script>
@@ -50,6 +53,13 @@ export default {
     }
   },
   created: function () {
+    if(sessionStorage.getItem('userName')){
+      this.$store.commit('setUser',sessionStorage.getItem('userName'))
+    }else{
+      this.$store.commit('setUser',null)
+    }
+    console.log('课程列表界面：'+this.$store.state.isLogin + this.$store.state.userName)
+
     this.showCourses()
   },
   methods: {
@@ -108,13 +118,40 @@ export default {
           type: 'warning'
         }).then(() => {
           this.deleteCourse(course_name,teacher_name)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-    }
+        })
+    },
+    showChoiceResult(course_name,teacher_name){
+      this.$http.post('http://127.0.0.1:8000/api/get_choice_results',{
+          course_name:course_name,
+          teacher_name:teacher_name,
+      }).then( response => {
+          var res = response.data
+          if (res.error_num == 0) { 
+            var grades=res.result
+            this.$router.push({name:'ChoicesResult',params:{a:grades[0],b:grades[1],c:grades[2],d:grades[3],e:grades[4]}})
+          } else {
+            this.$message.error('显示选择评价失败')
+            console.log(res.msg)
+          }
+        })
+    },
+    showTextResult(course_name,teacher_name){
+      this.$http.post('http://127.0.0.1:8000/api/get_text_results',{
+          course_name:course_name,
+          teacher_name:teacher_name,
+      }).then( response => {
+          var res = response.data
+          if (res.error_num == 0) { 
+            console.log(res.result)
+            
+            var grades={_1:"进度",_2:"难度",_3:"跟上"}
+            this.$router.push({name:'TextResult',params:grades})
+          } else {
+            this.$message.error('显示选择评价失败')
+            console.log(res.msg)
+          }
+        })
+    },
   }
 }
 </script>

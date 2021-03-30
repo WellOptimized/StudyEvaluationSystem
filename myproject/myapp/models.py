@@ -15,20 +15,32 @@ class LOGIN_STATE(Enum):
 
 
 class Account(models.Model):
-    username=models.CharField(max_length=32)
+    username=models.CharField(max_length=32,primary_key=True)
     password=models.CharField(max_length=32)
-    user_type=models.IntegerField
-    login_state=models.IntegerField
+    user_type=models.IntegerField(default=0)
+    login_state=models.IntegerField(default=0)
 
 class Course(models.Model):
     course_name=models.CharField(max_length=32)
     teacher_name=models.CharField(max_length=32)
+    class Meta:
+        unique_together=("course_name","teacher_name")
 
-class Comment(models.Model):
-    course=models.ForeignKey(Course, on_delete=models.CASCADE)
-    content=models.CharField(max_length=120)
+class ChoiceComment(models.Model):
+    course_name=models.CharField(max_length=32)
+    teacher_name=models.CharField(max_length=32)
     author_name=models.CharField(max_length=32)
-    author_type=models.IntegerField
+    content_1=models.IntegerField(default=0)
+    content_2=models.IntegerField(default=0)
+    content_3=models.IntegerField(default=0)
+    content_4=models.IntegerField(default=0)
+    content_5=models.IntegerField(default=0)
+
+class TextComment(models.Model):
+    course_name=models.CharField(max_length=32)
+    teacher_name=models.CharField(max_length=32)
+    author_name=models.CharField(max_length=32)
+    content=models.CharField(max_length=256)
 
 
 

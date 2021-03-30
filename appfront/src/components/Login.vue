@@ -11,8 +11,7 @@
           <el-form-item id="password" prop="password" label="密码">
             <el-input v-model="password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
-          <!-- <router-link to="/">返回登录界面</router-link> -->
-          <!-- <router-link to="/register">注册账号</router-link> -->
+
           <el-form-item>
             <el-button type="primary"  @click="goToReigster()">注 册</el-button>
           </el-form-item>
@@ -37,7 +36,12 @@ export default {
     }
   },
   created :function (){
-      
+    if(sessionStorage.getItem('userName')){
+      this.$store.commit('setUser',sessionStorage.getItem('userName'))
+    }else{
+      this.$store.commit('setUser',null)
+    }
+    console.log('登录界面：'+this.$store.state.isLogin + this.$store.state.userName)
   },
   methods: {
     doLogin() {
@@ -59,6 +63,9 @@ export default {
             if (response.data.error_num == 0) {
               this.$message.success('登录账号成功，用户名为:'+this.username)
               this.$router.push({ path: "/courselist" });
+              
+              sessionStorage.setItem('userName',this.username)
+              this.$store.commit('setUser',this.username)
 
             } else {
               // alert("您输入的用户名或密码错误！");

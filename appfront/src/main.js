@@ -15,10 +15,19 @@ Vue.use(ElementUI)
 import axios from 'axios'
 Vue.prototype.$http = axios
 
+import store from './store'
+Vue.prototype.$store=store
 /* eslint-disable no-new */
+
+import * as echarts from 'echarts';
+Vue.prototype.$echarts = echarts
+
 new Vue({
   el: '#app',
   router,
+  store,
+  echarts,
   components: { App },
   template: '<App/>'
 })
+

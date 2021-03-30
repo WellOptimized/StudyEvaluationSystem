@@ -61,8 +61,7 @@ export default {
         //     return;
         //     } 
             else {
-        // this.$http.get('http://127.0.0.1:8000/api/add_book?book_name=' + this.input)
-                this.$http.post('http://127.0.0.1:8000/api/register_account',{
+                this.$http.post('http://127.0.0.1:8000/api/add_account',{
                    
                     username:this.username,
                     email:this.email,
@@ -71,11 +70,9 @@ export default {
                 }).then( response => {
                     var res = response.data
                     if (res.error_num == 0) {
-                        // this.$router.push({ path: "/Home" });
                         this.$message.success('注册帐号成功，用户名为:'+this.username)
                     } else {
-                        this.$message.error('注册帐号失败，用户名为:'+this.username)
-                        console.log(res.data)
+                        this.$message.error(res['msg']+' '+this.username)
                     }
                 })
             }
