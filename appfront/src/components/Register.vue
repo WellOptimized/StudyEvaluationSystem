@@ -9,9 +9,7 @@
           <el-form-item prop="username" label="用户名">
             <el-input v-model="username" placeholder="请输入用户名"></el-input>
           </el-form-item>
-          <el-form-item prop="email" label="邮箱">
-            <el-input v-model="email" placeholder="请输入邮箱"></el-input>
-          </el-form-item>
+
           <el-form-item prop="password" label="设置密码">
             <el-input v-model="password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
@@ -37,7 +35,6 @@ export default {
   data() {
     return {     
         username: "",
-        email: "",
         password: "",    
     }
   },
@@ -48,10 +45,7 @@ export default {
         if (!this.username) {
             this.$message.error("请输入用户名！");
             return;
-        } else if (!this.email) {
-            this.$message.error("请输入邮箱！");
-            return;
-        } 
+        }
         // else if (this.email != null) {
         //     var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
         //     if (!reg.test(this.email)) {
@@ -62,15 +56,13 @@ export default {
         //     } 
             else {
                 this.$http.post('http://127.0.0.1:8000/api/add_account',{
-                   
-                    username:this.username,
-                    email:this.email,
-                    password:this.email,
-                    
+                  username:this.username,
+                  password:this.password,
                 }).then( response => {
                     var res = response.data
                     if (res.error_num == 0) {
                         this.$message.success('注册帐号成功，用户名为:'+this.username)
+                        this.$router.push({ path: "/" })
                     } else {
                         this.$message.error(res['msg']+' '+this.username)
                     }
@@ -87,9 +79,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .login {
+  position: absolute;
+  top:0px;
+  right: 0px;
   width: 100%;
-  height: 740px;
-  /* background: url("../assets/images/bg1.png") no-repeat; */
+  height: 100%;
+  /* background: url("../assets/login.jpg"); */
   background-size: cover;
   overflow: hidden;
 }

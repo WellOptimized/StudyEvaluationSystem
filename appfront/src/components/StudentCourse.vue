@@ -1,39 +1,37 @@
 <template>
   <div class="courselist">
-    <el-row display="margin-top:10px">
+    <!-- <el-row display="margin-top:10px">
         <el-input v-model="input_course_name" placeholder="请输入课程名" style="display:inline-table; width: 30%; float:left"></el-input>
         <el-input v-model="input_teacher_name" placeholder="请输入授课教师姓名" style="display:inline-table; width: 30%; float:left"></el-input>
         
         <el-button type="primary" @click="addCourse()" style="float:left; margin: 2px;">新增</el-button>
-
-        <el-button type="primary" @click="addCourse()" style="float:right ; margin: 2px;">修改帐号信息</el-button>
-    </el-row>
-
+    </el-row> -->
     
     <el-row>
         <el-table :data="course_list" style="width: 100%" border>
-          <el-table-column prop="course_name" label="课程名" min-width="50">
+          <el-table-column prop="course_name" label="课程名" min-width="100">
             <template slot-scope="scope"> {{ scope.row.fields.course_name }} </template>
           </el-table-column>
-          <el-table-column prop="teacher_name" label="授课教师" min-width="50">
+          <el-table-column prop="teacher_name" label="授课教师" min-width="100">
             <template slot-scope="scope"> {{ scope.row.fields.teacher_name }} </template>
           </el-table-column>
-          <!-- <el-table-column prop="evaluate_button" label="评学入口" min-width="100">
+          <el-table-column prop="evaluate_button" label="评学入口" min-width="100">
             <template slot-scope="scope">
               <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices')">定量评学</el-button>
             
               <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text')">定性评学</el-button>
 
             </template>
-          </el-table-column> -->
+          </el-table-column>
+          
           <el-table-column prop="delete_button" label="管理课程" min-width="100">
             <template slot-scope="scope">
-            <el-button @click.native="modifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name)">修改课程信息</el-button>
             <el-button @click.native="deleteConfirm(scope.row.fields.course_name,scope.row.fields.teacher_name)">删除课程</el-button>
             <el-button @click.native="showTextResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示文本评价</el-button>
             <el-button @click.native="showChoiceResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示选择评价</el-button>
             </template>
           </el-table-column>
+        
         </el-table>
     </el-row>
   </div>
@@ -123,22 +121,16 @@ export default {
           teacher_name:teacher_name,
       }).then( response => {
           var res = response.data
-          if (res.error_num == 0) { //存储  course_name、teacher_name
-
-            let grades=res.result
-            console.log(grades)
-            this.$router.push({name:'ChoicesResult'})
-            
-            sessionStorage.setItem('grades',grades)
-            this.$store.commit('grades',grades)
-
+          if (res.error_num == 0) { 
+            var grades=res.result
+            this.$router.push({name:'ChoicesResult',params:{a:grades[0],b:grades[1],c:grades[2],d:grades[3],e:grades[4]}})
           } else {
             this.$message.error('显示选择评价失败')
             console.log(res.msg)
           }
         })
     },
-    showTextResult(course_name,teacher_name){  //存储  course_name、teacher_name
+    showTextResult(course_name,teacher_name){
       this.$http.post('http://127.0.0.1:8000/api/get_text_results',{
           course_name:course_name,
           teacher_name:teacher_name,
@@ -155,9 +147,6 @@ export default {
           }
         })
     },
-    modifyCourse(course_name,teacher_name){
-
-    }
   }
 }
 </script>

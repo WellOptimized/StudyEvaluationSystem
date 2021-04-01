@@ -17,14 +17,20 @@ export default {
         }else{
             this.$store.commit('setUser',null)
         }
-        console.log('选择评价结果：'+this.$store.state.isLogin + this.$store.state.userName)
+        console.log('登录状态：'+this.$store.state.isLogin + this.$store.state.userName)
+
+        if(sessionStorage.getItem('grades')){
+            this.$store.commit('setGrades',sessionStorage.getItem('grades'))
+        }else{
+            this.$store.commit('setGrades',null)
+        }
+        console.log('分数'+this.$store.state.grades)
     },
     data() {
         return {
         }
     },
     mounted(){
-        console.log(this.$route.params);
         this.drawLine();
     },
     methods: {
@@ -100,7 +106,7 @@ export default {
                         name:'分数',
                         type:'bar',
                         barWidth: 20,
-                        data:[this.$route.params.a,this.$route.params.b,this.$route.params.c,this.$route.params.d,this.$route.params.e],
+                        data:[this.$store.state.grades[0],this.$store.state.grades[2],this.$store.state.grades[4],this.$store.state.grades[6],this.$store.state.grades[8]],
                         itemStyle: {
                             normal: {
                                 color: '#00abf7',//设置柱子颜色

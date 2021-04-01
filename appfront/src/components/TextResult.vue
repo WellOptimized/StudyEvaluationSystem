@@ -29,6 +29,7 @@ created: function () {
     }
     console.log('文本评价结果：'+this.$store.state.isLogin + this.$store.state.userName)
 
+
 },
 methods: {
     wordClickHandler(name, value, vm) {

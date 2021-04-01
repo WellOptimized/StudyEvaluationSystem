@@ -23,13 +23,12 @@ def show_accounts(request):
     response = {}
     try:
         account = Account.objects.filter()
-        # response['list'] = json.loads(serializers.serialize("json", account))
         response['list'] = json.loads(serializers.serialize("json", account))
 
-        response['msg'] = 'success'
+        response['msg'] = '成功显示所有帐号信息'
         response['error_num'] = 0
     except  Exception as e:
-        response['msg'] = str(e)
+        response['msg'] = '获取账号信息失败'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -39,15 +38,16 @@ def login_account(request):
     r_username=post_body['username']
     r_password=post_body['password']
     print(r_username,r_password)
-    
+
     response = {}
     try:
         Account.objects.get(username=r_username,password=r_password)
     except Exception as e:   #0个或者多个
-        response['msg'] = 'No such account'
+        response['msg'] = '用户名或者密码错误'
         response['error_num'] = 1
         return JsonResponse(response)
-    response['msg'] = 'success'
+    response['msg'] = '成功登陆： '+r_username
+    response['info']= Account.objects.get(username=r_username,password=r_password).user_type
     response['error_num'] = 0
 
 
@@ -57,20 +57,25 @@ def login_account(request):
 def add_account(request):
     post_body=json.loads(request.body)
     r_username=post_body['username']
-    r_email=post_body['email']
     r_password=post_body['password']
-    print(r_username,r_email,r_password)
+    print(r_username,r_password)
+    r_user_type=1
+    response = {}
 
-    response = {}    
     try:
         Account.objects.get(username=r_username,password=r_password)
     except Exception as e:  #0个或者多个
-        Account.objects.create(username=r_username,password=r_password)
-        response['msg'] = 'success'
+        if r_username == 'admin':
+            r_user_type = 3
+        elif r_username == 'gao':
+            r_user_type = 2
+            
+        Account.objects.create(username=r_username,password=r_password,user_type=r_user_type)
+        response['msg'] = '成功注册帐号： '+r_username
         response['error_num'] = 0
         return JsonResponse(response)
     
-    response['msg'] = '已经存在一个相同的帐号!'
+    response['msg'] = '该帐号已存在'
     response['error_num'] = 1
     return JsonResponse(response)
 
@@ -82,16 +87,16 @@ def add_course(request):
     print(r_course_name,r_teacher_name)
     
     response = {}
-    
+
     try:
         Course.objects.get(course_name=r_course_name,teacher_name=r_teacher_name)
     except  Exception as e:
         Course.objects.create(course_name=r_course_name,teacher_name=r_teacher_name)
-        response['msg'] = 'success'
+        response['msg'] = '成功增加课程： '+r_course_name + ' '+r_teacher_name
         response['error_num'] = 0
         return JsonResponse(response)
     
-    response['msg'] = '已经存在一个相同的课程!'
+    response['msg'] = '该课程已存在'
     response['error_num'] = 1
     return JsonResponse(response)
 
@@ -101,10 +106,10 @@ def show_courses(request):
     try:
         courses = Course.objects.filter()
         response['list'] = json.loads(serializers.serialize("json", courses))
-        response['msg'] = 'success'
+        response['msg'] = '成功显示所有课程'
         response['error_num'] = 0
     except  Exception as e:
-        response['msg'] = str(e)
+        response['msg'] = '获取所有课程失败'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -117,14 +122,13 @@ def delete_course(request):     #与之相关的课程评价都需要删除
     
     Course.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).delete()
     
-
     response = {}
     try:
         courses = Course.objects.filter()
-        response['msg'] = 'success'
+        response['msg'] = '成功删除课程：' + r_course_name +' '+r_teacher_name
         response['error_num'] = 0
     except  Exception as e:
-        response['msg'] = str(e)
+        response['msg'] = '删除课程失败'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -149,11 +153,11 @@ def add_choicecomment(request):
     except Exception as e:
         ChoiceComment.objects.create(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name,\
             content_1=r_content_1,content_2=r_content_2,content_3=r_content_3,content_4=r_content_4,content_5=r_content_5)
-        response['msg'] = 'success'
+        response['msg'] = '成功评价该课程'
         response['error_num'] = 0
         return JsonResponse(response)
     
-    response['msg'] = '你已经评价过这个选择评价了!'
+    response['msg'] = '您已经评价过此课程'
     response['error_num'] = 1
     return JsonResponse(response)
 
@@ -163,10 +167,10 @@ def show_choicecomments(request):
     try:
         choicecomments = ChoiceComment.objects.filter()
         response['list'] = json.loads(serializers.serialize("json", choicecomments))
-        response['msg'] = 'success'
+        response['msg'] = '成功显示评价'
         response['error_num'] = 0
     except  Exception as e:
-        response['msg'] = str(e)
+        response['msg'] = '获取评价信息失败'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -183,7 +187,12 @@ def get_choice_results(request):
     response = {}    
     
     result=ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name)
-    count=result.count()
+    count = result.count()
+    if count == 0:
+        response['msg'] = '当前课程暂时没有评价!'
+        response['error_num'] = 1
+        response['result']=[]
+        return JsonResponse(response)
     content_list=[0,0,0,0,0]
     for row in result:
         content_list[0]+=row.content_1
@@ -195,7 +204,7 @@ def get_choice_results(request):
     content_list=[x/count for x in content_list]
     for x in content_list:
         print(x)
-    response['msg'] = '成功!'
+    response['msg'] = '成功显示评价!'
     response['error_num'] = 0
     response['result']=content_list
     return JsonResponse(response)
@@ -207,10 +216,10 @@ def show_textcomments(request):
     try:
         textcomments = TextComment.objects.filter()
         response['list'] = json.loads(serializers.serialize("json", textcomments))
-        response['msg'] = 'success'
+        response['msg'] = '成功显示评价'
         response['error_num'] = 0
     except  Exception as e:
-        response['msg'] = str(e)
+        response['msg'] = '获取评价信息失败'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -223,12 +232,18 @@ def add_textcomment(request):
     r_author_name=post_body['author_name']
     r_content=post_body['content']
 
-    print(r_course_name,r_teacher_name,r_author_name,r_content)
-
-    TextComment.objects.create(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name,content=r_content)
-    response = {}    
-    response['msg'] = 'success'
-    response['error_num'] = 0
+    print(r_course_name, r_teacher_name, r_author_name, r_content)
+    
+    try:
+        TextComment.objects.get(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name)
+    except Exception as e:
+        TextComment.objects.create(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name)
+        response['msg'] = '成功评价该课程'
+        response['error_num'] = 0
+        return JsonResponse(response)
+    
+    response['msg'] = '您已经评价过此课程'
+    response['error_num'] = 1
     return JsonResponse(response)
 
 @require_http_methods(["POST"])

@@ -45,31 +45,37 @@ export default {
   },
   methods: {
     doLogin() {
-      // if (!this.username) {
-      //   this.$message.error("请输入用户名！");
-      //   return;
-      // } else if (!this.password) {
-      //   this.$message.error("请输入密码！");
-      //   return;
-      // } else 
+      if (!this.username) {
+        this.$message.error("请输入用户名！");
+        return;
+      } else if (!this.password) {
+        this.$message.error("请输入密码！");
+        return;
+      } else 
       {
-            this.$http.post('http://127.0.0.1:8000/api/login_account',{
-            
-                username:this.username,
-                password:this.password,
-            
+        this.$http.post('http://127.0.0.1:8000/api/login_account',{ 
+          username:this.username,
+          password:this.password,  
         }).then(response => {
             console.log(response);
             if (response.data.error_num == 0) {
-              this.$message.success('登录账号成功，用户名为:'+this.username)
-              this.$router.push({ path: "/courselist" });
-              
+              this.$message.success(response.data.msg)
+
+              if(response.data.info==3){
+                this.$router.push({ path: "/courselist" })
+              }
+              else if(response.data.info==2){
+                this.$router.push({ path: "/teachercourse" })
+              }
+              else if(response.data.info==1){
+                this.$router.push({ path: "/studentcourse" })
+              }
+
               sessionStorage.setItem('userName',this.username)
               this.$store.commit('setUser',this.username)
 
             } else {
-              // alert("您输入的用户名或密码错误！");
-              this.$message.error(response.data.msg+' : '+this.username)
+              this.$message.error(response.data.msg)
             }
           });
       }
@@ -84,17 +90,19 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .login {
+  position: absolute;
+  top:0px;
+  right: 0px;
   width: 100%;
-  height: 740px;
-  /* background: url("../assets/images/bg1.png") no-repeat; */
+  height: 100%;
+  /* background: url("../assets/login.jpg"); */
   background-size: cover;
   overflow: hidden;
 }
 .login-wrap {
-  /* background: url("../assets/images/login_bg.png") no-repeat; */
   background-size: cover;
-  width: 1000px;
-  height: 2000px;
+  width: 100%;
+  height: 100%;
   margin: 215px auto;
   overflow: hidden;
   padding-top: 10px;

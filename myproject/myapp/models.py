@@ -17,7 +17,7 @@ class LOGIN_STATE(Enum):
 class Account(models.Model):
     username=models.CharField(max_length=32,primary_key=True)
     password=models.CharField(max_length=32)
-    user_type=models.IntegerField(default=0)
+    user_type=models.IntegerField(default=0)    
     login_state=models.IntegerField(default=0)
 
 class Course(models.Model):

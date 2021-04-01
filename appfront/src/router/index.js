@@ -9,6 +9,8 @@ import Choices from '@/components/Choices'
 import Text from '@/components/Text'
 import ChoicesResult from '@/components/ChoicesResult'
 import TextResult from '@/components/TextResult'
+import StudentCourse from '@/components/StudentCourse'
+import TeacherCourse from '@/components/TeacherCourse'
 
 Vue.use(Router)
 
@@ -48,6 +50,16 @@ export default new Router({
       path: '/courselist/showtextresult',
       name: 'TextResult',
       component:TextResult
+    },
+    {
+      path: '/studentcourse',
+      name: 'StudentCourse',
+      component:StudentCourse
+    },
+    {
+      path: '/teachercourse',
+      name: 'TeacherCourse',
+      component:TeacherCourse
     },
   ]
 })

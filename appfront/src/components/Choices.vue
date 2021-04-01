@@ -59,7 +59,7 @@
       commit(){
           this.$http.post('http://127.0.0.1:8000/api/add_choicecomment',{
             course_name:'operatingsystem',
-            teacher_name:'1',
+            teacher_name:'gao',
             author_name:this.$store.state.userName,
             content_1:this.radio1,
             content_2:this.radio2,

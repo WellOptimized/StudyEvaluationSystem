@@ -18,9 +18,15 @@ const store = new Vuex.Store({
         state.userName = ''
         state.isLogin = false
       }
-    }
-
-
+    },
+    setGrades(state, grades) {
+      if (grades) {
+        state.grades = grades
+      } else if (grades == null) { //登出
+        sessionStorage.setItem('grades', null)
+        state.grades = []
+      }
+    },
   },
 });
 export default store
