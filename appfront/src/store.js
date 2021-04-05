@@ -27,6 +27,14 @@ const store = new Vuex.Store({
         state.grades = []
       }
     },
+    setText(state, text) {
+      if (text) {
+        state.text = text
+      } else if (text == null) { //登出
+        sessionStorage.setItem('text', null)
+        state.text = []
+      }
+    },
   },
 });
 export default store

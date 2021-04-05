@@ -10,6 +10,7 @@
 </template>
 
 <script>
+var res
 export default {
     created: function () {
         if(sessionStorage.getItem('userName')){
@@ -24,7 +25,8 @@ export default {
         }else{
             this.$store.commit('setGrades',null)
         }
-        console.log('分数'+this.$store.state.grades)
+        res=JSON.parse(this.$store.state.grades)
+        console.log('最后的结果'+res)
     },
     data() {
         return {
@@ -106,7 +108,7 @@ export default {
                         name:'分数',
                         type:'bar',
                         barWidth: 20,
-                        data:[this.$store.state.grades[0],this.$store.state.grades[2],this.$store.state.grades[4],this.$store.state.grades[6],this.$store.state.grades[8]],
+                        data:res,
                         itemStyle: {
                             normal: {
                                 color: '#00abf7',//设置柱子颜色

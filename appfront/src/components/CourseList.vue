@@ -57,6 +57,13 @@ export default {
     }
     console.log('课程列表界面：'+this.$store.state.isLogin + this.$store.state.userName)
 
+    if(sessionStorage.getItem('text')){
+      this.$store.commit('setText',sessionStorage.getItem('text'))
+    }else{
+      this.$store.commit('setText',null)
+    }
+    console.log('课程列表界面：'+this.$store.state.text)
+
     this.showCourses()
   },
   methods: {
@@ -123,14 +130,15 @@ export default {
           teacher_name:teacher_name,
       }).then( response => {
           var res = response.data
-          if (res.error_num == 0) { //存储  course_name、teacher_name
+          if (res.error_num == 0) { 
 
             let grades=res.result
             console.log(grades)
-            this.$router.push({name:'ChoicesResult'})
             
-            sessionStorage.setItem('grades',grades)
-            this.$store.commit('grades',grades)
+            sessionStorage.setItem('grades',JSON.stringify(grades))
+            this.$store.commit('setGrades',grades)
+
+            this.$router.push({name:'ChoicesResult'})
 
           } else {
             this.$message.error('显示选择评价失败')
@@ -138,17 +146,22 @@ export default {
           }
         })
     },
-    showTextResult(course_name,teacher_name){  //存储  course_name、teacher_name
+    showTextResult(course_name,teacher_name){ 
       this.$http.post('http://127.0.0.1:8000/api/get_text_results',{
           course_name:course_name,
           teacher_name:teacher_name,
       }).then( response => {
           var res = response.data
           if (res.error_num == 0) { 
-            console.log(res.result)
             
-            var grades={_1:"进度",_2:"难度",_3:"跟上"}
-            this.$router.push({name:'TextResult',params:grades})
+            let text=res.result
+            console.log(text)
+
+            sessionStorage.setItem('text',JSON.stringify(text))
+            this.$store.commit('setText',text)
+            
+            this.$router.push({name:'TextResult'})
+
           } else {
             this.$message.error('显示选择评价失败')
             console.log(res.msg)

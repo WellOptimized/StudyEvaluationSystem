@@ -183,9 +183,7 @@ def get_choice_results(request):
     r_teacher_name=post_body['teacher_name']
 
     print(r_course_name,r_teacher_name)
-
     response = {}    
-    
     result=ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name)
     count = result.count()
     if count == 0:
@@ -233,11 +231,11 @@ def add_textcomment(request):
     r_content=post_body['content']
 
     print(r_course_name, r_teacher_name, r_author_name, r_content)
-    
+    response={}
     try:
         TextComment.objects.get(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name)
     except Exception as e:
-        TextComment.objects.create(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name)
+        TextComment.objects.create(course_name=r_course_name,teacher_name=r_teacher_name,author_name=r_author_name,content=r_content)
         response['msg'] = '成功评价该课程'
         response['error_num'] = 0
         return JsonResponse(response)
@@ -255,12 +253,9 @@ def get_text_results(request):
 
     print(r_course_name,r_teacher_name)
 
-    response = {}    
-    
+    response = {}      
     result=TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name)
-    
     mywordlist = []
-
     f_stop = open("stopwords.txt")
     try:
         f_stop_text = f_stop.read()

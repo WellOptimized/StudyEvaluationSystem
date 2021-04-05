@@ -1,58 +1,70 @@
 <template>
-  <div id="app">
-      <wordcloud
-      :data="defaultWords"
-      nameKey="name"
-      valueKey="value"
-      :color="myColors"
-      :showTooltip="true"
-      :wordClick="wordClickHandler">
-      </wordcloud>
-  </div>
+<div id="myecharts-wordcloud" :style="{width: '1500px', height: '460px'}"></div>
 </template>
 
-<script>
 
-import wordcloud from 'vue-wordcloud'
+<script>
+var res
 
 export default {
-  name: 'app',
-  components: {
-    wordcloud
-  },
+    created: function () {
+        if(sessionStorage.getItem('userName')){
+        this.$store.commit('setUser',sessionStorage.getItem('userName'))
+        }else{
+        this.$store.commit('setUser',null)
+        }
+        console.log('文本评价结果：'+this.$store.state.isLogin + this.$store.state.userName)
 
-created: function () {
-    if(sessionStorage.getItem('userName')){
-    this.$store.commit('setUser',sessionStorage.getItem('userName'))
-    }else{
-    this.$store.commit('setUser',null)
+        if(sessionStorage.getItem('text')){
+            this.$store.commit('setText',sessionStorage.getItem('text'))
+        }else{
+            this.$store.commit('setText',null)
+        }    
+
+        res=JSON.parse(this.$store.state.text)
+    },
+    data() {
+        return {
+        }
+    },
+    mounted(){
+        this.drawLine();
+    },
+    methods: {
+        drawLine() {          
+            let myChart = this.$echarts.init(       document.getElementById("myecharts-wordcloud")     );          
+            let option = {       
+                title: {    
+                    text: "评价",         
+                    textStyle: {    color: "#148D75",  },         
+                    top: 14,         
+                    left: 26,       
+                },       
+                series: [{
+                    type: "wordCloud",           
+                    size: ["80%", "80%"],           
+                    rotationRange: [0, 0],              
+                    textPadding: 0,           
+                    autoSize: { enable: true, minSize: 14, },           
+                    left: "center",                            
+                    top: "center",           
+                    right: null,           
+                    bottom: null,           
+                    textStyle: {             
+                        normal: {               
+                            color: function() {return "#056E71" },             
+                            },           
+                    },           
+                    data: [res
+
+
+                    
+                    ]
+                },],
+            }
+            myChart.setOption(option, true);   
+        }
     }
-    console.log('文本评价结果：'+this.$store.state.isLogin + this.$store.state.userName)
+}
 
-
-},
-methods: {
-    wordClickHandler(name, value, vm) {
-    console.log('wordClickHandler', name, value, vm);
-    }
-},
-data() {
-return {
-    myColors: ['#1f77b4', '#629fc9', '#94bedb', '#c9e0ef'],
-    defaultWords: [{
-        "name": this.$route.params._1,
-        "value": 20
-    },
-    {
-        "name": this.$route.params._2,
-        "value": 20
-    },
-    {
-        "name": this.$route.params._3,
-        "value": 10
-    },
-    ]
-}
-}
-}
 </script>

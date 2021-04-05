@@ -22,6 +22,8 @@ Vue.prototype.$store=store
 import * as echarts from 'echarts';
 Vue.prototype.$echarts = echarts
 
+require('echarts-wordcloud');
+
 new Vue({
   el: '#app',
   router,

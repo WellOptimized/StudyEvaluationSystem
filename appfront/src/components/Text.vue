@@ -31,11 +31,15 @@ export default {
     commit(){
         this.$http.post('http://127.0.0.1:8000/api/add_textcomment',{
             course_name:'operatingsystem',
-            teacher_name:'1',
+            teacher_name:'gao',
             author_name:this.$store.state.userName,
             content:this.textarea3,
         }).then(response=>{
-            this.$message.success('提交文本评价成功')
+            if (response.data.error_num == 0) {
+              this.$message.success('提交评价成功')
+            }else{
+              this.$message.error('你已经评价过这门课程了')
+            }
         })
     }
   }
