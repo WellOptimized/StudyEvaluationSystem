@@ -1,7 +1,7 @@
 <template>
 <div class="MyAchievement">
     <div class="MyAchievement-echart">
-            <div class="echart-title">这门课的评分</div>
+            <h1 id="1">这门课的评分</h1>
             <div class="echart-content">
                 <div id="myChart" :style="{width: '1500px', height: '460px'}"></div>
             </div>
@@ -11,14 +11,17 @@
 
 <script>
 var res
+var course_name
 export default {
     created: function () {
+        console.log('------------------------------------------------')
+        
         if(sessionStorage.getItem('userName')){
             this.$store.commit('setUser',sessionStorage.getItem('userName'))
         }else{
             this.$store.commit('setUser',null)
         }
-        console.log('登录状态：'+this.$store.state.isLogin + this.$store.state.userName)
+        console.log(this.$store.state.isLogin + this.$store.state.userName)
 
         if(sessionStorage.getItem('grades')){
             this.$store.commit('setGrades',sessionStorage.getItem('grades'))
@@ -26,7 +29,17 @@ export default {
             this.$store.commit('setGrades',null)
         }
         res=JSON.parse(this.$store.state.grades)
-        console.log('最后的结果'+res)
+        console.log(res)
+
+        if(sessionStorage.getItem('course')){
+            this.$store.commit('setCourse',sessionStorage.getItem('course'))
+        }else{
+            this.$store.commit('setCourse',null)
+        }
+        course_name=JSON.parse(this.$store.state.course)
+        console.log(course_name)
+
+        console.log('------------------------------------------------')
     },
     data() {
         return {
@@ -37,6 +50,8 @@ export default {
     },
     methods: {
         drawLine(){
+            document.getElementById("1").innerHTML=course_name;
+
             var myChart = this.$echarts.init(document.getElementById('myChart'));//获取容器元素
             var option = {
                 tooltip : {
@@ -62,7 +77,7 @@ export default {
                 toolbox: {
                     show : true,
                     feature : {
-                        magicType : {show: true, type: [ 'bar']},
+                        magicType : {show: true, type: ['bar']},
                     },
                     right: '6%',
                 },
@@ -70,7 +85,7 @@ export default {
                 xAxis : [
                     {
                         type : 'category',
-                        data : ['1','2','3','4','5'],
+                        data : ['能跟上进度','能理解所讲内容','对课程有全新的认识','对专业技能有提升','能应对课程作业'],
                         splitLine: {show: false},//去除网格分割线
                         axisTick: {//刻度
                             show: false//不显示刻度线

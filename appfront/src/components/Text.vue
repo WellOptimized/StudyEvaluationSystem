@@ -1,12 +1,20 @@
 <template>
 <div id="app">
-  <p>请输入文本评价</p>
+  <h1>操作系统课程评学</h1>
+  <br/>
+  <br/>
   <el-input
     type="textarea"
-    :autosize="{ minRows: 3, maxRows: 5}"
+    :autosize="{ minRows: 5, maxRows: 10}"
     placeholder="请输入内容"
     v-model="textarea3">
   </el-input>
+
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
 
   <el-button @click="commit">提交评价</el-button>
 </div>

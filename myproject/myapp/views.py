@@ -262,6 +262,10 @@ def get_text_results(request):
     finally:
         f_stop.close()
     f_stop_seg_list = f_stop_text.split('\n')
+
+
+    file_name = open("diy.txt")
+    jieba.load_userdict(file_name)
     
     for i in result:
         print(i.content)
@@ -271,10 +275,27 @@ def get_text_results(request):
         for myword in liststr.split('/'):
             if not(myword.strip() in f_stop_seg_list):
                 mywordlist.append(myword)
+    mywordlist.sort()
     print(mywordlist)
+    last = ""
+    count = 0
+    dict = {}
+    
+    for x in mywordlist:
+        if last == "":
+           last = x
+           count += 1
+        elif last != x:
+            dict[last] = count
+            last = x
+            count = 1
+        elif last == x:
+            count += 1
+    dict[last]=count
+    print(dict)
     
     response['msg'] = '成功!'
     response['error_num'] = 0
-    response['result']=mywordlist
+    response['result']=dict
     return JsonResponse(response)
 

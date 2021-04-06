@@ -6,29 +6,28 @@
         
         <el-button type="primary" @click="addCourse()" style="float:left; margin: 2px;">新增</el-button>
 
-        <el-button type="primary" @click="addCourse()" style="float:right ; margin: 2px;">修改帐号信息</el-button>
     </el-row>
 
     
     <el-row>
         <el-table :data="course_list" style="width: 100%" border>
-          <el-table-column prop="course_name" label="课程名" min-width="50">
+          <el-table-column prop="course_name" label="课程名" min-width="30">
             <template slot-scope="scope"> {{ scope.row.fields.course_name }} </template>
           </el-table-column>
-          <el-table-column prop="teacher_name" label="授课教师" min-width="50">
+          <el-table-column prop="teacher_name" label="授课教师" min-width="30">
             <template slot-scope="scope"> {{ scope.row.fields.teacher_name }} </template>
           </el-table-column>
-          <!-- <el-table-column prop="evaluate_button" label="评学入口" min-width="100">
+          <el-table-column prop="evaluate_button" label="评学入口" min-width="50">
             <template slot-scope="scope">
               <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices')">定量评学</el-button>
             
               <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text')">定性评学</el-button>
 
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column prop="delete_button" label="管理课程" min-width="100">
             <template slot-scope="scope">
-            <el-button @click.native="modifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name)">修改课程信息</el-button>
+            <!-- <el-button @click.native="modifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name)">修改课程信息</el-button> -->
             <el-button @click.native="deleteConfirm(scope.row.fields.course_name,scope.row.fields.teacher_name)">删除课程</el-button>
             <el-button @click.native="showTextResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示文本评价</el-button>
             <el-button @click.native="showChoiceResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示选择评价</el-button>
@@ -50,20 +49,6 @@ export default {
     }
   },
   created: function () {
-    if(sessionStorage.getItem('userName')){
-      this.$store.commit('setUser',sessionStorage.getItem('userName'))
-    }else{
-      this.$store.commit('setUser',null)
-    }
-    console.log('课程列表界面：'+this.$store.state.isLogin + this.$store.state.userName)
-
-    if(sessionStorage.getItem('text')){
-      this.$store.commit('setText',sessionStorage.getItem('text'))
-    }else{
-      this.$store.commit('setText',null)
-    }
-    console.log('课程列表界面：'+this.$store.state.text)
-
     this.showCourses()
   },
   methods: {
@@ -110,8 +95,7 @@ export default {
             this.$message.success('删除课程成功')
             this.showCourses()
           } else {
-            this.$message.error('删除课程失败，请重试')
-            console.log(res.msg)
+            this.$message.error(res['msg'])
           }
         })
     },
@@ -133,16 +117,18 @@ export default {
           if (res.error_num == 0) { 
 
             let grades=res.result
-            console.log(grades)
             
             sessionStorage.setItem('grades',JSON.stringify(grades))
             this.$store.commit('setGrades',grades)
 
+            sessionStorage.setItem('course',JSON.stringify(course_name))
+            this.$store.commit('setCourse',course_name)
+            
+
             this.$router.push({name:'ChoicesResult'})
 
           } else {
-            this.$message.error('显示选择评价失败')
-            console.log(res.msg)
+            this.$message.error(res['msg'])
           }
         })
     },
@@ -155,21 +141,22 @@ export default {
           if (res.error_num == 0) { 
             
             let text=res.result
-            console.log(text)
 
             sessionStorage.setItem('text',JSON.stringify(text))
             this.$store.commit('setText',text)
+
+            sessionStorage.setItem('course',JSON.stringify(course_name))
+            this.$store.commit('setCourse',course_name)
             
             this.$router.push({name:'TextResult'})
 
           } else {
-            this.$message.error('显示选择评价失败')
-            console.log(res.msg)
+            this.$message.error(res['msg'])
           }
         })
     },
     modifyCourse(course_name,teacher_name){
-
+      
     }
   }
 }
