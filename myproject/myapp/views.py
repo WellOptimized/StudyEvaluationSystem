@@ -80,6 +80,52 @@ def add_account(request):
     return JsonResponse(response)
 
 @require_http_methods(["POST"])
+def delete_account(request):     #与之相关的课程评价都需要删除
+    post_body=json.loads(request.body)
+    r_user_name=post_body['user_name']
+    print(r_user_name)
+
+
+    response = {}
+    try:
+        Account.objects.get(username=r_user_name)
+    except  Exception as e:
+        response['msg'] = '此账号不存在： '+r_user_name
+        response['error_num'] = 1
+        return JsonResponse(response)
+    
+    Account.objects.filter(username=r_user_name).delete()
+    ChoiceComment.objects.filter(author_name=r_user_name).delete()
+    TextComment.objects.filter(author_name=r_user_name).delete()
+
+    response['msg'] = '成功删除帐号：' + r_user_name
+    response['error_num'] = 0
+
+    return JsonResponse(response)
+
+@require_http_methods(["POST"])
+def modify_account(request):     #与之相关的课程评价都需要删除
+    post_body=json.loads(request.body)
+    r_user_name = post_body['user_name']
+    r_password=post_body['password']
+    print(r_user_name,r_password)
+
+    response = {}
+    try:
+        Account.objects.get(username=r_user_name)
+    except  Exception as e:
+        response['msg'] = '此账号不存在： '+r_user_name
+        response['error_num'] = 1
+        return JsonResponse(response)
+    
+    Account.objects.filter(username=r_user_name).update(password=r_password)
+
+    response['msg'] = '成功修改帐号：' + r_user_name + '的密码'
+    response['error_num'] = 0
+
+    return JsonResponse(response)
+
+@require_http_methods(["POST"])
 def add_course(request):
     post_body=json.loads(request.body)
     r_course_name=post_body['course_name']
@@ -120,16 +166,37 @@ def delete_course(request):     #与之相关的课程评价都需要删除
     r_teacher_name=post_body['teacher_name']
     print(r_course_name,r_teacher_name)
     
-    Course.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).delete()
+    Course.objects.filter(course_name=r_course_name, teacher_name=r_teacher_name).delete()
+    ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).delete()
+    TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).delete()
     
     response = {}
     try:
-        courses = Course.objects.filter()
         response['msg'] = '成功删除课程：' + r_course_name +' '+r_teacher_name
         response['error_num'] = 0
     except  Exception as e:
         response['msg'] = '删除课程失败'
         response['error_num'] = 1
+    return JsonResponse(response)
+
+@require_http_methods(["POST"])
+def modify_course(request):     #与之相关的课程评价都需要删除
+    post_body=json.loads(request.body)
+    r_course_name=post_body['course_name']
+    r_teacher_name = post_body['teacher_name']
+    aim_course_name = post_body['aim_course_name']
+    aim_teacher_name = post_body['aim_teacher_name']
+    
+    print(r_course_name,r_teacher_name,aim_course_name,aim_teacher_name)
+    
+    Course.objects.filter(course_name=r_course_name, teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
+    ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
+    TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
+    
+    response = {}
+    response['msg'] = '成功修改课程：' + r_course_name +' '+r_teacher_name
+    response['error_num'] = 0
+
     return JsonResponse(response)
 
 @require_http_methods(["POST"])
@@ -297,5 +364,29 @@ def get_text_results(request):
     response['msg'] = '成功!'
     response['error_num'] = 0
     response['result']=dict
+    return JsonResponse(response)
+
+@require_http_methods(["POST"])
+def delete_evaluation(request):     #与之相关的课程评价都需要删除 ChoiceComment  TextComment
+    post_body = json.loads(request.body)
+    r_user_name=post_body['user_name']
+    r_course_name=post_body['course_name']
+    r_teacher_name=post_body['teacher_name']
+    print(r_user_name,r_course_name,r_teacher_name)
+    
+    a=ChoiceComment.objects.filter(author_name=r_user_name,course_name=r_course_name,teacher_name=r_teacher_name)
+    b=TextComment.objects.filter(author_name=r_user_name,course_name=r_course_name,teacher_name=r_teacher_name)
+    
+    response = {}
+
+    if len(a) + len(b) == 0:
+        response['msg'] = '没有目标评价'
+        response['error_num'] = 1
+        return JsonResponse(response)
+    else:
+        a.delete()
+        b.delete()
+        response['msg'] = '成功删除评价：'
+        response['error_num'] = 0
     return JsonResponse(response)
 
