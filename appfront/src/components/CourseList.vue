@@ -6,6 +6,31 @@
         
         <el-button type="primary" @click="addCourse()" style="float:left; margin: 2px;">新增</el-button>
 
+        <el-button type="primary" @click="dialogVisibleForDeleteAccount = true">删除帐号</el-button>
+        <el-dialog
+          title="提示"
+          :visible.sync="dialogVisibleForDeleteAccount"
+          width="30%"
+          :before-close="handleClose">
+          <span>删除帐号</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleForDeleteAccount = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleForDeleteAccount = false">确 定</el-button>
+          </span>
+        </el-dialog>
+
+        <el-button type="primary" @click="dialogVisibleForDeleteEvaluation = true">删除评价</el-button>
+        <el-dialog
+          title="提示"
+          :visible.sync="dialogVisibleForDeleteEvaluation"
+          width="30%"
+          :before-close="handleClose">
+          <span>删除评价</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleForDeleteEvaluation = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleForDeleteEvaluation = false">确 定</el-button>
+          </span>
+        </el-dialog>
     </el-row>
 
     
@@ -28,6 +53,20 @@
           <el-table-column prop="delete_button" label="管理课程" min-width="100">
             <template slot-scope="scope">
             <!-- <el-button @click.native="modifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name)">修改课程信息</el-button> -->
+            
+            <el-button type="primary" @click="dialogVisibleForModifyCourse = true">修改课程信息</el-button>
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisibleForModifyCourse"
+              width="30%"
+              :before-close="handleClose">
+              <span>修改课程信息</span>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleForModifyCourse = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisibleForModifyCourse = false">确 定</el-button>
+              </span>
+            </el-dialog>
+            
             <el-button @click.native="deleteConfirm(scope.row.fields.course_name,scope.row.fields.teacher_name)">删除课程</el-button>
             <el-button @click.native="showTextResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示文本评价</el-button>
             <el-button @click.native="showChoiceResult(scope.row.fields.course_name,scope.row.fields.teacher_name)">展示选择评价</el-button>
@@ -46,12 +85,22 @@ export default {
       input_course_name: '',
       input_teacher_name:'',
       course_list: [],
+      dialogVisibleForDeleteAccount: false,
+      dialogVisibleForDeleteEvaluation :false,
+      dialogVisibleForModifyCourse:false,
     }
   },
   created: function () {
     this.showCourses()
   },
   methods: {
+    handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+    },
     addCourse () {
       this.$http.post('http://127.0.0.1:8000/api/add_course',{
         
