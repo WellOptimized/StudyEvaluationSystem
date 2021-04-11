@@ -70,12 +70,11 @@ export default {
         }
     },
     mounted(){
+        document.getElementById("1").innerHTML=course_name;
         this.drawLine();
     },
     methods: {
         drawLine() {          
-            document.getElementById("1").innerHTML=course_name;
-
             let myChart = this.$echarts.init(document.getElementById("myecharts-wordcloud"));          
             let option = {       
                 title: {    

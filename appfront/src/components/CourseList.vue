@@ -66,9 +66,8 @@
           </el-table-column>
           <el-table-column prop="evaluate_button" label="评学入口" min-width="50">
             <template slot-scope="scope">
-              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices')">定量评学</el-button>
-            
-              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text')">定性评学</el-button>
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices',scope.row.fields.course_name)">定量评学</el-button>
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text',scope.row.fields.course_name)">定性评学</el-button>
 
             </template>
           </el-table-column>
@@ -246,7 +245,10 @@ export default {
           }
         })
     },
-    jumpToDetail(url){
+    jumpToDetail(url,course_name){
+      sessionStorage.setItem('course',JSON.stringify(course_name))
+      this.$store.commit('setCourse',course_name)
+      console.log(course_name)
       this.$router.push({ path: url });
     },
     deleteCourse(course_name,teacher_name){
@@ -319,9 +321,6 @@ export default {
           }
         })
     },
-    modifyCourse(course_name,teacher_name){
-      
-    }
   }
 }
 </script>

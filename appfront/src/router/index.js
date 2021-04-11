@@ -42,6 +42,16 @@ export default new Router({
       component:Text
     },
     {
+      path: '/courselist/数据库原理/choices',
+      name: 'Choices',
+      component:Choices
+    },
+    {
+      path: '/courselist/数据库原理/text',
+      name: 'Text',
+      component:Text
+    },
+    {
       path: '/courselist/showchoicesresult',
       name: 'ChoicesResult',
       component:ChoicesResult

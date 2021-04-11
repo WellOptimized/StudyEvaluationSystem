@@ -46,12 +46,11 @@ export default {
         }
     },
     mounted(){
+        document.getElementById("1").innerHTML=course_name;
         this.drawLine();
     },
     methods: {
         drawLine(){
-            document.getElementById("1").innerHTML=course_name;
-
             var myChart = this.$echarts.init(document.getElementById('myChart'));//获取容器元素
             var option = {
                 tooltip : {

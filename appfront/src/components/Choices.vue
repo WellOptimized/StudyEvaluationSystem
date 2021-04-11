@@ -1,6 +1,6 @@
 <template>  
 <div>
-  <h1>操作系统课程评学</h1>
+  <h1 id="1">课程评学</h1>
   <br/> 
   <br/> 
 
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+var course_name
   export default {
     data () {
       return {
@@ -75,7 +76,18 @@
       this.$store.commit('setUser',null)
     }
     console.log('选择评价界面：'+this.$store.state.isLogin + this.$store.state.userName)
-  },
+
+    if(sessionStorage.getItem('course')){
+      this.$store.commit('setCourse',sessionStorage.getItem('course'))
+    }else{
+      this.$store.commit('setCourse',null)
+    }
+    course_name=JSON.parse(this.$store.state.course)
+
+    },
+    mounted:function(){
+      document.getElementById("1").innerHTML=course_name;
+    },
     methods:{
       commit(){
           this.$http.post('http://127.0.0.1:8000/api/add_choicecomment',{
