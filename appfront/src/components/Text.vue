@@ -22,6 +22,7 @@
 
 <script>
 var course_name
+var teacher_name
 export default {
   data() {
     return {
@@ -41,6 +42,14 @@ export default {
       this.$store.commit('setCourse',null)
     }
     course_name=JSON.parse(this.$store.state.course)
+    if(sessionStorage.getItem('teacher')){
+      this.$store.commit('setTeacher',sessionStorage.getItem('teacher'))
+    }else{
+      this.$store.commit('setTeacher',null)
+    }
+    teacher_name=JSON.parse(this.$store.state.teacher)
+    console.log(course_name,teacher_name)
+
   },
   mounted:function(){
     document.getElementById("1").innerHTML=course_name;
@@ -48,8 +57,8 @@ export default {
   methods:{
     commit(){
         this.$http.post('http://127.0.0.1:8000/api/add_textcomment',{
-            course_name:'operatingsystem',
-            teacher_name:'gao',
+            course_name:course_name,
+            teacher_name:teacher_name,
             author_name:this.$store.state.userName,
             content:this.textarea3,
         }).then(response=>{

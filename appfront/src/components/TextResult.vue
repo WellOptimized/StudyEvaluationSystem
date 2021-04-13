@@ -48,20 +48,6 @@ export default {
         }
         console.log(after)
 
-        final = after.map(val => ({
-        ...val,
-            textStyle: {
-                normal: {
-                    color: 'rgb(' + [
-                Math.round(Math.random() * 200),
-                Math.round(Math.random() * 200),
-                Math.round(Math.random() * 200)
-            ].join(',') + ')'
-                }
-            }
-        }));
-        console.log(final)
-
         console.log('------------------------------------------------')
 
     },
@@ -104,7 +90,7 @@ export default {
                         shadowColor: '#333'
                     }
                     },       
-                    data:final,
+                    data:after,
                 },],
             }
             myChart.setOption(option, true);   

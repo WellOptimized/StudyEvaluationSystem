@@ -43,6 +43,14 @@ const store = new Vuex.Store({
         state.course = []
       }
     },
+    setTeacher(state, teacher) {
+      if (teacher) {
+        state.teacher = teacher
+      } else if (teacher == null) { //登出
+        sessionStorage.setItem('teacher', null)
+        state.teacher = []
+      }
+    },
   },
 });
 export default store

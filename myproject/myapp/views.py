@@ -14,7 +14,8 @@ from .models import Course
 from .models import ChoiceComment
 from .models import TextComment
 
-import jieba
+from .wordcut import extract_asp_by_grammar
+
 # Create your views here.
 
 
@@ -189,9 +190,9 @@ def modify_course(request):     #与之相关的课程评价都需要删除
     
     print(r_course_name,r_teacher_name,aim_course_name,aim_teacher_name)
     
-    Course.objects.filter(course_name=r_course_name, teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
-    ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
-    TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(course_name=aim_course_name,teacher_name=aim_teacher_name)
+    Course.objects.filter(course_name=r_course_name, teacher_name=r_teacher_name).update(teacher_name=aim_teacher_name)
+    ChoiceComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(teacher_name=aim_teacher_name)
+    TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name).update(teacher_name=aim_teacher_name)
     
     response = {}
     response['msg'] = '成功修改课程：' + r_course_name +' '+r_teacher_name
@@ -323,25 +324,13 @@ def get_text_results(request):
     response = {}      
     result=TextComment.objects.filter(course_name=r_course_name,teacher_name=r_teacher_name)
     mywordlist = []
-    f_stop = open("stopwords.txt")
-    try:
-        f_stop_text = f_stop.read()
-    finally:
-        f_stop.close()
-    f_stop_seg_list = f_stop_text.split('\n')
-
-
-    file_name = open("diy.txt")
-    jieba.load_userdict(file_name)
     
     for i in result:
-        print(i.content)
-        seg_list=jieba.cut(i.content,cut_all=True)
-        liststr = "/".join(seg_list)
+        tmp_list = extract_asp_by_grammar(i.content)
+        print(tmp_list)
+        for x in tmp_list:
+            mywordlist.append(x)    
 
-        for myword in liststr.split('/'):
-            if not(myword.strip() in f_stop_seg_list):
-                mywordlist.append(myword)
     mywordlist.sort()
     print(mywordlist)
     last = ""

@@ -66,8 +66,8 @@
           </el-table-column>
           <el-table-column prop="evaluate_button" label="评学入口" min-width="50">
             <template slot-scope="scope">
-              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices',scope.row.fields.course_name)">定量评学</el-button>
-              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text',scope.row.fields.course_name)">定性评学</el-button>
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/choices',scope.row.fields.course_name,scope.row.fields.teacher_name)">定量评学</el-button>
+              <el-button @click.native="jumpToDetail('/courselist/' + scope.row.fields.course_name+'/text',scope.row.fields.course_name,scope.row.fields.teacher_name)">定性评学</el-button>
 
             </template>
           </el-table-column>
@@ -75,19 +75,19 @@
             <template slot-scope="scope">
             <!-- <el-button @click.native="modifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name)">修改课程信息</el-button> -->
             
-            <el-button type="primary" @click="dialogVisibleForModifyCourse = true" >修改课程信息</el-button>
+            <el-button type="primary" @click="dialogVisibleForModifyCourse = true;my_course_name=scope.row.fields.course_name;my_teacher_name=scope.row.fields.teacher_name" >修改课程信息</el-button>
             <el-dialog title="修改课程信息" :visible.sync="dialogVisibleForModifyCourse">
               <el-form :model="form">
-                <el-form-item label="课程名称" :label-width="formLabelWidth">
+                <!-- <el-form-item label="课程名称" :label-width="formLabelWidth">
                   <el-input v-model="form.coursename" autocomplete="off"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="教师姓名" :label-width="formLabelWidth">
                   <el-input v-model="form.teachername" autocomplete="off"></el-input>
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisibleForModifyCourse = false">取 消</el-button>
-                <el-button type="primary" @click="handleCloseForModifyCourse(scope.row.fields.course_name,scope.row.fields.teacher_name);dialogVisibleForModifyCourse=false;">确 定</el-button>
+                <el-button type="primary" @click.native="handleCloseForModifyCourse(my_course_name,my_teacher_name);dialogVisibleForModifyCourse=false;">确 定</el-button>
               </div>
             </el-dialog>
             
@@ -122,6 +122,8 @@ export default {
       dialogVisibleForModifyCourse:false,
       dialogVisibleForModifyAccount:false,
 
+      my_course_name:'',
+      my_teacher_name:'',
     }
   },
   created: function () {
@@ -170,6 +172,8 @@ export default {
 
     },
     handleCloseForModifyCourse(a,b) {
+      console.log(a,b)
+
       this.$http.post('http://127.0.0.1:8000/api/modify_course',{
         course_name:a,
         teacher_name:b,
@@ -245,10 +249,12 @@ export default {
           }
         })
     },
-    jumpToDetail(url,course_name){
+    jumpToDetail(url,course_name,teacher_name){
       sessionStorage.setItem('course',JSON.stringify(course_name))
       this.$store.commit('setCourse',course_name)
-      console.log(course_name)
+      sessionStorage.setItem('teacher',JSON.stringify(teacher_name))
+      this.$store.commit('setTeacher',teacher_name)
+
       this.$router.push({ path: url });
     },
     deleteCourse(course_name,teacher_name){
@@ -286,10 +292,10 @@ export default {
             
             sessionStorage.setItem('grades',JSON.stringify(grades))
             this.$store.commit('setGrades',grades)
-
             sessionStorage.setItem('course',JSON.stringify(course_name))
             this.$store.commit('setCourse',course_name)
-            
+            sessionStorage.setItem('teacher',JSON.stringify(teacher_name))
+            this.$store.commit('setTeacher',teacher_name)
 
             this.$router.push({name:'ChoicesResult'})
 
@@ -310,9 +316,10 @@ export default {
 
             sessionStorage.setItem('text',JSON.stringify(text))
             this.$store.commit('setText',text)
-
             sessionStorage.setItem('course',JSON.stringify(course_name))
             this.$store.commit('setCourse',course_name)
+            sessionStorage.setItem('teacher',JSON.stringify(teacher_name))
+            this.$store.commit('setTeacher',teacher_name)
             
             this.$router.push({name:'TextResult'})
 
